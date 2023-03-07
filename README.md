@@ -2,7 +2,7 @@
 
 > Prioritizing Zones for Caribou Habitat Restoration in British Columbia
 
-App to support the report by [Dickie, M. and Serrouya, R.](./app/www/BC-Restoration-Prioritization-Report-Final.pdf).
+App to support the report by [Dickie, M. and Serrouya, R.](./app/www/BC-Restoration-Prioritization-Report-Final.pdf)
 
 ## Run App
 
@@ -27,4 +27,4 @@ rsconnect::deployApp("app",
 
 ## License
 
-MIT (c) 2022 Peter Solymos and Analythium
+MIT (c) 2022 Peter Solymos and [Analythium](https://analythium.io?ref=gh-bcpriority)
