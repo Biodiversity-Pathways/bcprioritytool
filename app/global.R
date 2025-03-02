@@ -11,6 +11,7 @@ library(waiter)
 library(reactable)
 library(readxl)
 library(terra)
+library(markdown)
 # library(raster)
 # library(rgdal)
 
