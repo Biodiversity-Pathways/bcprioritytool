@@ -10,7 +10,8 @@ library(leafpop)
 library(waiter)
 library(reactable)
 library(readxl)
-library(raster)
+library(terra)
+# library(raster)
 # library(rgdal)
 
 ## set file size to 25 MB

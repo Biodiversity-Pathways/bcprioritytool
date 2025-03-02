@@ -438,7 +438,7 @@ server <- function(input, output, session) {
       req(!bad)
 
       # add random colors
-      if(!inherits(p, "RasterLayer")) {
+      if(!inherits(p, "SpatRaster")) {
         p[["polyCol"]] <- sample(hcl.colors(25, "RdYlBu"), nrow(p), replace=TRUE)
       }
 

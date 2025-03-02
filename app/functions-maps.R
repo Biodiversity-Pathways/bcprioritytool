@@ -137,7 +137,7 @@ map_all_update <- function(map, opacity = 0.8, extra = NULL) {
         overlayGroups = c("Boreal", "Central", "Southern", "Northern", "Custom Layer"),
         position = "topright",
         options = leaflet::layersControlOptions(collapsed = TRUE))
-  } else if(inherits(extra, "RasterLayer")) {
+  } else if(inherits(extra, "SpatRaster")) {
     map <- map |>
       addRasterImage(extra,
                      colors = "Spectral",
@@ -292,9 +292,11 @@ map_one <- function(map, dat, region, inputs = NULL, custom_var = NULL,
                 opacity = opacity) |>
             addLegend(position = "bottomright",
                 pal = colorNumeric("Spectral", 
-                    range(raster::values(extra), na.rm=TRUE), 
+                    # range(raster::values(extra), na.rm=TRUE), 
+                    range(terra::values(extra)[,1L], na.rm=TRUE), 
                     na.color = "transparent"),
-                values = raster::values(extra),
+                # values = raster::values(extra),
+                values = terra::values(extra)[,1L],
                 group = "Custom Layer",
                 opacity = opacity,
                 title = "Custom Layer") |>
@@ -393,9 +395,11 @@ map_one_base <- function(dat, region, inputs = NULL, custom_var = NULL,
                 opacity = opacity) |>
             addLegend(position = "bottomright",
                 pal = colorNumeric("Spectral", 
-                    range(raster::values(extra), na.rm=TRUE), 
+                    # range(raster::values(extra), na.rm=TRUE), 
+                    range(terra::values(extra)[,1L], na.rm=TRUE), 
                     na.color = "transparent"),
-                values = raster::values(extra),
+                # values = raster::values(extra),
+                values = terra::values(extra)[,1L],
                 group = "Custom Layer",
                 opacity = opacity,
                 title = "Custom Layer") |>
@@ -413,7 +417,7 @@ map_one_base <- function(dat, region, inputs = NULL, custom_var = NULL,
 # map_one(dat, "Boreal")
 map_custom <- function(map, custom, opacity = 0.8) {
 
-    if(inherits(custom, "RasterLayer")) {
+    if(inherits(custom, "SpatRaster")) {
         m <- map |>
         addRasterImage(custom,
             colors = "Spectral",
@@ -421,9 +425,11 @@ map_custom <- function(map, custom, opacity = 0.8) {
             opacity = opacity) |>
         addLegend(position = "bottomright",
             pal = colorNumeric("Spectral", 
-                range(raster::values(custom), na.rm=TRUE), 
+                # range(raster::values(custom), na.rm=TRUE), 
+                range(terra::values(extra)[,1L], na.rm=TRUE),
                 na.color = "transparent"),
-            values = raster::values(custom),
+            # values = raster::values(custom),
+            values = terra::values(extra)[,1L],
             opacity = opacity,
             title = "Custom Layer")
     } else {
@@ -470,13 +476,14 @@ read_spatial_file <- function(file, dTolerance = 10) {
     if (ff == "geotiff") {
         # x <- stars::read_stars(file)
         # x <- stars::st_warp(x, crs = 4326)
-        # x <- terra::rast(file)
+        x <- terra::rast(file)
         # x <- terra::project(x, "epsg:4326", method = "near")
         # x <- terra::as.raster(x)
-        x <- raster::raster(file)
+        # x <- raster::raster(file)
 #        crs(r) <- CRS("+init=epsg:4326")
 #        x <- raster::resample(x, CRS("+init=epsg:4326"))
-
+        if (dim(x)[3L] > 1)
+            stop("Raster file can only have 1 channel/layer.")
     }
     if (ff == "geopackage") {
         x <- sf::st_read(file)
