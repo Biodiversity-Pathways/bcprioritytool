@@ -11,7 +11,7 @@ library(waiter)
 library(reactable)
 library(readxl)
 library(raster)
-library(rgdal)
+# library(rgdal)
 
 ## set file size to 25 MB
 options(shiny.maxRequestSize = 25 * 1024^2)
@@ -27,6 +27,7 @@ source("functions-maps.R")
 
 dat <- readRDS("app-data-regions.rds")
 h <- readRDS("app-data-herds.rds")
+s <- readRDS("app-data-scrip.rds")
 
 TITLE <- "BC Prioritization Support Tool"
 MAP_HEIGHT <- 600
@@ -34,11 +35,19 @@ ALPHA <- 0.8
 HERD_BORDER <- 2
 DOWNLOAD_CRS <- 4269
 
+# used for groups
 pal <- colorFactor(
        palette = c("forestgreen","green1", "darkolivegreen2","gray", "gray40"),
        domain = as.factor(1:5),
        ordered = TRUE,
        na.color = NA)
+# used for SCRIP
+pal2 <- colorFactor(
+       palette = c("darkgreen","green", "lightgreen"),
+       domain = factor(c("Low", "Medium", "High"), c("Low", "Medium", "High")),
+       ordered = TRUE,
+       na.color = NA)
+
 
 ui_formula <- function(region_name, custom_var = FALSE) {
     f1 <- switch(tolower(region_name),

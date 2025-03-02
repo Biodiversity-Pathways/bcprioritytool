@@ -86,7 +86,8 @@ server <- function(input, output, session) {
     output$map_Central <- renderLeaflet({
         map_one_base(dat, "Central",
                      custom_var = isolate(custom_var()[["Central"]]),
-                     extra = isolate(custom_spatial()))
+                     extra = isolate(custom_spatial()),
+                     scrip_layer = s)
     })
     observeEvent(c(input$btn_Central, input$custom_upload, custom_spatial()), {
         wc <- if (is.null(input[["slider_Central_custom"]]))
@@ -107,7 +108,8 @@ server <- function(input, output, session) {
             map_one(dat, "Central", inputs = l,
                     custom_var = custom_var()[["Central"]],
                     opacity = input$alpha_Central,
-                    extra = custom_spatial())
+                    extra = custom_spatial(),
+                    scrip_layer = a)
         }
     }, ignoreInit = TRUE)
 

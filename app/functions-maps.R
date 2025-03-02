@@ -184,18 +184,21 @@ map_region_popup <- function(map, p, region, opacity = 0.8) {
         pj <- p[p$HERD_NA == j,]
         upj <- up[p$HERD_NA == j,]
         map <- map |>
+            addMapPane("herds", zIndex = 420) |>  
             addPolygons(
                 data = pj,
                 group = j,
                 fillColor = pal(factor(pj$Zone, 1:5)),
                 popup = popupTable(upj, row.numbers = FALSE, feature.id = FALSE),
                 weight = 0.5,
+                options = pathOptions(pane = "herds"),
                 opacity = opacity,
                 color = "white",
                 fillOpacity = opacity) |>
             addPolylines(
                 data = hs[hs$HERD_NA == j,],
                 group = j,
+                options = list(zIndex = 400),
                 fillColor = NA,
                 weight = HERD_BORDER,
                 opacity = 1,
@@ -206,8 +209,32 @@ map_region_popup <- function(map, p, region, opacity = 0.8) {
 }
 
 map_one <- function(map, dat, region, inputs = NULL, custom_var = NULL,
-                    opacity = 0.8, extra = NULL) {
+                    opacity = 0.8, extra = NULL, scrip_layer = NULL) {
     p <- wght_zone(dat, region, inputs = inputs, custom_var = custom_var)
+
+    if (region == "Central" && !is.null(scrip_layer)) {
+        map <- map |>
+        addMapPane("scrip", zIndex = 410) |>  
+        addPolygons(
+            data = s,
+            group = "SCRIP",
+            fillColor = pal2(factor(s$PriorityCl, c("Low", "Medium", "High"))),
+            weight = 0.5,
+            options = pathOptions(pane = "scrip"),
+            opacity = opacity/2,
+            color = "black",
+            fillOpacity = opacity/2) |>
+        addLegend(
+            position = "bottomright",
+            pal = pal2,
+            values = factor(c("Low", "Medium", "High"), c("Low", "Medium", "High")),
+            title = "SCRIP",
+            opacity = opacity)
+        grp <- c(unique(p$HERD_NA), "SCRIP")
+    } else {
+        grp <- unique(p$HERD_NA)
+    }
+
     if (is.null(extra)) {
         map |>
         map_region_popup(p, region, opacity = opacity) |>
@@ -219,7 +246,7 @@ map_one <- function(map, dat, region, inputs = NULL, custom_var = NULL,
             opacity = opacity) |>
         addLayersControl(
             baseGroups = c("CartoDB", "ESRI", "Open Street Map", "Google"),
-            overlayGroups = unique(p$HERD_NA),#region,
+            overlayGroups = grp,
             position = "topright",
             options = leaflet::layersControlOptions(collapsed = TRUE))
     } else {
@@ -247,7 +274,7 @@ map_one <- function(map, dat, region, inputs = NULL, custom_var = NULL,
                 fillOpacity = 0.5*opacity) |>
             addLayersControl(
                 baseGroups = c("CartoDB", "ESRI", "Open Street Map", "Google"),
-                overlayGroups = c(unique(p$HERD_NA), "Custom Layer"),#region,
+                overlayGroups = c(grp, "Custom Layer"),
                 position = "topright",
                 options = leaflet::layersControlOptions(collapsed = TRUE))
         } else {
@@ -273,7 +300,7 @@ map_one <- function(map, dat, region, inputs = NULL, custom_var = NULL,
                 title = "Custom Layer") |>
             addLayersControl(
                 baseGroups = c("CartoDB", "ESRI", "Open Street Map", "Google"),
-                overlayGroups = c(unique(p$HERD_NA), "Custom Layer"),#region,
+                overlayGroups = c(grp, "Custom Layer"),
                 position = "topright",
                 options = leaflet::layersControlOptions(collapsed = TRUE))
         }
@@ -281,10 +308,36 @@ map_one <- function(map, dat, region, inputs = NULL, custom_var = NULL,
 }
 
 map_one_base <- function(dat, region, inputs = NULL, custom_var = NULL,
-                         opacity = 0.8, extra = NULL) {
+                         opacity = 0.8, extra = NULL, scrip_layer = NULL) {
+
     p <- wght_zone(dat, region, inputs = inputs, custom_var = custom_var)
+
+    if (region == "Central" && !is.null(scrip_layer)) {
+        m <- map_base() |>
+        addMapPane("scrip", zIndex = 410) |>  
+        addPolygons(
+            data = s,
+            group = "SCRIP",
+            fillColor = pal2(factor(s$PriorityCl, c("Low", "Medium", "High"))),
+            weight = 0.5,
+            options = pathOptions(pane = "scrip"),
+            opacity = opacity/2,
+            color = "black",
+            fillOpacity = opacity/2) |>
+        addLegend(
+            position = "bottomright",
+            pal = pal2,
+            values = factor(c("Low", "Medium", "High"), c("Low", "Medium", "High")),
+            title = "SCRIP",
+            opacity = opacity)
+        grp <- c(unique(p$HERD_NA), "SCRIP")
+    } else {
+        m <- map_base()
+        grp <- unique(p$HERD_NA)
+    }
+
     if (is.null(extra)) {
-        map_base() |>
+        m |>
         map_region_popup(p, region, opacity = opacity) |>
         addLegend(
             position = "bottomleft",
@@ -294,7 +347,7 @@ map_one_base <- function(dat, region, inputs = NULL, custom_var = NULL,
             opacity = opacity) |>
         addLayersControl(
             baseGroups = c("CartoDB", "ESRI", "Open Street Map", "Google"),
-            overlayGroups = unique(p$HERD_NA),#region,
+            overlayGroups = grp,
             position = "topright",
             options = leaflet::layersControlOptions(collapsed = TRUE))
     } else {
@@ -322,7 +375,7 @@ map_one_base <- function(dat, region, inputs = NULL, custom_var = NULL,
                 fillOpacity = 0.5*opacity) |>
             addLayersControl(
                 baseGroups = c("CartoDB", "ESRI", "Open Street Map", "Google"),
-                overlayGroups = c(unique(p$HERD_NA), "Custom Layer"),#region,
+                overlayGroups = c(grp, "Custom Layer"),
                 position = "topright",
                 options = leaflet::layersControlOptions(collapsed = TRUE))
         } else {
@@ -348,7 +401,7 @@ map_one_base <- function(dat, region, inputs = NULL, custom_var = NULL,
                 title = "Custom Layer") |>
             addLayersControl(
                 baseGroups = c("CartoDB", "ESRI", "Open Street Map", "Google"),
-                overlayGroups = c(unique(p$HERD_NA), "Custom Layer"),#region,
+                overlayGroups = c(grp, "Custom Layer"),
                 position = "topright",
                 options = leaflet::layersControlOptions(collapsed = TRUE))
         }
@@ -455,7 +508,7 @@ extract_error <- function(e, message) {
 ## returns the zip file path & name
 prepare_region_shp <- function(dat, region, inputs = NULL, custom_var = NULL, dir = tempdir(), crs = 4269) {
     p <- wght_zone(dat, region, inputs = inputs, custom_var = custom_var)
-    p <- st_transform(p, crs = crs)
+    p <- sf::st_transform(p, crs = crs)
 
     tmp_dir <- file.path(dir, region)
     if (dir.exists(tmp_dir))

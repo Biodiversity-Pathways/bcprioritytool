@@ -6,7 +6,7 @@ header <- dashboardHeader(
     titleWidth = 300
 )
 
-sidebar <- sidebar <- dashboardSidebar(
+sidebar <- dashboardSidebar(
     sidebarMenu(
         id = "tabs",
         menuItem("Home", tabName = "home", icon = icon("home")),
@@ -22,7 +22,9 @@ sidebar <- sidebar <- dashboardSidebar(
                  menuSubItem("Custom Spatial Data", tabName = "custom_spatial")
         ),
         menuItem("Glossary", tabName = "glossary", icon = icon("table")),
-        menuItem("Report", tabName = "report", icon = icon("book"))
+        menuItem("Reports", tabName = "reports", icon = icon("book"),
+                 menuSubItem("Priority Zones", tabName = "report_zones"),
+                 menuSubItem("SCRIP Report", tabName = "report_scrip"))
     )
 )
 
@@ -91,6 +93,8 @@ ui_region <- function(region_name) {
 
 ui_all <- fluidRow(
     column(width = 12,
+        h3("Welcome to the BC Prioritization Support Tool!"),
+        p("Here you'll find the results of a prioritization process to guide habitat restoration within southern mountain caribou (SMC) and boreal caribou populations. The process directs restoration towards areas with higher gains in undisturbed caribou habitat relative to the cost of conducting restoration, while building on existing habitat protection and focusing in areas more heavily used by caribou. For the Central group of SMC, we also provide priority areas developed through the Strategic Caribou Restoration Implementation Plan (SCRIP), which was developed by West Moberly First Nations, Saulteau First Nations, Environment and Climate Change Canada, and the Province of British Columbia, via the Partnership Agreement. The SCRIP priorities are founded on shared values and aims to include Indigenous knowledge, and newly established conservation and protection measures that have been instituted through the Partnership Agreement. Please find reports for the two processes under the \"Reports\" tab."),
         leafletOutput("map_All", width = "100%", height = MAP_HEIGHT),
         p(),
         HTML("<p class=\"text-right\">Application web design by <a href=\"https://analythium.io\" target=\"_blank\">Analythium Solutions Inc.</a></p>")
@@ -211,8 +215,15 @@ body <- dashboardBody(
         tabItem("region4", ui_region("Northern")),
         tabItem("custom_values", ui_custom_values),
         tabItem("custom_spatial", ui_custom_spatial),
-        tabItem("glossary", fluidRow(column(width=12, reactableOutput("glossary_table")))),
-        tabItem("report", fluidRow(column(width=12, includeMarkdown("report.md"))))
+        tabItem("glossary", 
+            fluidRow(column(width=12, reactableOutput("glossary_table")))
+        ),
+        tabItem("report_zones", 
+            fluidRow(column(width=12, includeMarkdown("report_zones.md")))
+        ),
+        tabItem("report_scrip", 
+            fluidRow(column(width=12, includeMarkdown("report_scrip.md")))
+        )
     )
 )
 
