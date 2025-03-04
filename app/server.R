@@ -87,7 +87,8 @@ server <- function(input, output, session) {
         map_one_base(dat, "Central",
                      custom_var = isolate(custom_var()[["Central"]]),
                      extra = isolate(custom_spatial()),
-                     scrip_layer = s)
+                     scrip_layer = s,
+                     collapsed = FALSE)
     })
     observeEvent(c(input$btn_Central, input$custom_upload, custom_spatial()), {
         wc <- if (is.null(input[["slider_Central_custom"]]))
@@ -107,9 +108,11 @@ server <- function(input, output, session) {
             clearShapes() |>
             map_one(dat, "Central", inputs = l,
                     custom_var = custom_var()[["Central"]],
-                    opacity = input$alpha_Central,
+                    opacity = input[["alpha_Central"]],
                     extra = custom_spatial(),
-                    scrip_layer = a)
+                    scrip_layer = a,
+                    scrip_opacity = input[["alpha_Central_scrip"]],
+                    collapsed = FALSE)
         }
     }, ignoreInit = TRUE)
 

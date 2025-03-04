@@ -79,8 +79,14 @@ ui_region <- function(region_name) {
         column(width = 3,
             box(
                 title = "Controls", width = NULL, solidHeader = TRUE,
-                sliderInput(paste0("alpha_", region_name), "Transparency",
+                sliderInput(paste0("alpha_", region_name), "Opacity",
                     min = 0, max = 1, value = ALPHA, step = 0.05),
+                if (region_name == "Central") {
+                    sliderInput(paste0("alpha_", region_name, "_scrip"), "SCRIP Layer Opacity",
+                        min = 0, max = 1, value = ALPHA, step = 0.05)
+                } else {
+                    NULL
+                },
                 hr(),
                 h4("Zone weights"),
                 sliders,

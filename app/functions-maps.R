@@ -40,7 +40,7 @@ map_region <- function(map, dat, region, opacity = 0.8) {
             color = "black")
 }
 
-map_all <- function(opacity = 0.8, extra = NULL) {
+map_all <- function(opacity = 0.8, extra = NULL, collapsed = TRUE) {
     if (is.null(extra)) {
         map_base() |>
         map_region(dat, "Boreal", opacity = opacity) |>
@@ -57,7 +57,7 @@ map_all <- function(opacity = 0.8, extra = NULL) {
             baseGroups = c("CartoDB", "ESRI", "Open Street Map", "Google"),
             overlayGroups = c("Boreal", "Central", "Southern", "Northern"),
             position = "topright",
-            options = leaflet::layersControlOptions(collapsed = TRUE))
+            options = leaflet::layersControlOptions(collapsed = collapsed))
     } else {
         if (inherits(extra, "sf")) {
             map_base() |>
@@ -88,7 +88,7 @@ map_all <- function(opacity = 0.8, extra = NULL) {
                 baseGroups = c("CartoDB", "ESRI", "Open Street Map", "Google"),
                 overlayGroups = c("Boreal", "Central", "Southern", "Northern", "Custom Layer"),
                 position = "topright",
-                options = leaflet::layersControlOptions(collapsed = TRUE))
+                options = leaflet::layersControlOptions(collapsed = collapsed))
         } else {
             map_base() |>
             map_region(dat, "Boreal", opacity = opacity) |>
@@ -109,12 +109,12 @@ map_all <- function(opacity = 0.8, extra = NULL) {
                 baseGroups = c("CartoDB", "ESRI", "Open Street Map", "Google"),
                 overlayGroups = c("Boreal", "Central", "Southern", "Northern", "Custom Layer"),
                 position = "topright",
-                options = leaflet::layersControlOptions(collapsed = TRUE))
+                options = leaflet::layersControlOptions(collapsed = collapsed))
         }
     }
 }
 
-map_all_update <- function(map, opacity = 0.8, extra = NULL) {
+map_all_update <- function(map, opacity = 0.8, extra = NULL, collapsed = TRUE) {
   map <- clearGroup(map, "Custom Layer")
 
   if (inherits(extra, "sf")) {
@@ -136,7 +136,7 @@ map_all_update <- function(map, opacity = 0.8, extra = NULL) {
         baseGroups = c("CartoDB", "ESRI", "Open Street Map", "Google"),
         overlayGroups = c("Boreal", "Central", "Southern", "Northern", "Custom Layer"),
         position = "topright",
-        options = leaflet::layersControlOptions(collapsed = TRUE))
+        options = leaflet::layersControlOptions(collapsed = collapsed))
   } else if(inherits(extra, "SpatRaster")) {
     map <- map |>
       addRasterImage(extra,
@@ -147,7 +147,7 @@ map_all_update <- function(map, opacity = 0.8, extra = NULL) {
         baseGroups = c("CartoDB", "ESRI", "Open Street Map", "Google"),
         overlayGroups = c("Boreal", "Central", "Southern", "Northern", "Custom Layer"),
         position = "topright",
-        options = leaflet::layersControlOptions(collapsed = TRUE))
+        options = leaflet::layersControlOptions(collapsed = collapsed))
   }
   map
 }
@@ -209,7 +209,13 @@ map_region_popup <- function(map, p, region, opacity = 0.8) {
 }
 
 map_one <- function(map, dat, region, inputs = NULL, custom_var = NULL,
-                    opacity = 0.8, extra = NULL, scrip_layer = NULL) {
+                    opacity = 0.8, extra = NULL, 
+                    scrip_layer = NULL, scrip_opacity = NULL,
+                    collapsed = TRUE) {
+
+    if (is.null(scrip_opacity))
+        scrip_opacity <- opacity
+
     p <- wght_zone(dat, region, inputs = inputs, custom_var = custom_var)
 
     if (region == "Central" && !is.null(scrip_layer)) {
@@ -221,15 +227,15 @@ map_one <- function(map, dat, region, inputs = NULL, custom_var = NULL,
             fillColor = pal2(factor(s$PriorityCl, c("Low", "Medium", "High"))),
             weight = 0.5,
             options = pathOptions(pane = "scrip"),
-            opacity = opacity/2,
+            opacity = scrip_opacity,
             color = "black",
-            fillOpacity = opacity/2) |>
+            fillOpacity = scrip_opacity) |>
         addLegend(
             position = "bottomright",
             pal = pal2,
             values = factor(c("Low", "Medium", "High"), c("Low", "Medium", "High")),
             title = "SCRIP",
-            opacity = opacity)
+            opacity = scrip_opacity)
         grp <- c(unique(p$HERD_NA), "SCRIP")
     } else {
         grp <- unique(p$HERD_NA)
@@ -248,7 +254,7 @@ map_one <- function(map, dat, region, inputs = NULL, custom_var = NULL,
             baseGroups = c("CartoDB", "ESRI", "Open Street Map", "Google"),
             overlayGroups = grp,
             position = "topright",
-            options = leaflet::layersControlOptions(collapsed = TRUE))
+            options = leaflet::layersControlOptions(collapsed = collapsed))
     } else {
         if (inherits(extra, "sf")) {
             map |>
@@ -276,7 +282,7 @@ map_one <- function(map, dat, region, inputs = NULL, custom_var = NULL,
                 baseGroups = c("CartoDB", "ESRI", "Open Street Map", "Google"),
                 overlayGroups = c(grp, "Custom Layer"),
                 position = "topright",
-                options = leaflet::layersControlOptions(collapsed = TRUE))
+                options = leaflet::layersControlOptions(collapsed = collapsed))
         } else {
             map |>
             map_region_popup(p, region, opacity = opacity) |>
@@ -304,13 +310,18 @@ map_one <- function(map, dat, region, inputs = NULL, custom_var = NULL,
                 baseGroups = c("CartoDB", "ESRI", "Open Street Map", "Google"),
                 overlayGroups = c(grp, "Custom Layer"),
                 position = "topright",
-                options = leaflet::layersControlOptions(collapsed = TRUE))
+                options = leaflet::layersControlOptions(collapsed = collapsed))
         }
     }
 }
 
 map_one_base <- function(dat, region, inputs = NULL, custom_var = NULL,
-                         opacity = 0.8, extra = NULL, scrip_layer = NULL) {
+                         opacity = 0.8, extra = NULL, 
+                         scrip_layer = NULL, scrip_opacity = NULL,
+                         collapsed = TRUE) {
+
+    if (is.null(scrip_opacity))
+        scrip_opacity <- opacity
 
     p <- wght_zone(dat, region, inputs = inputs, custom_var = custom_var)
 
@@ -323,15 +334,15 @@ map_one_base <- function(dat, region, inputs = NULL, custom_var = NULL,
             fillColor = pal2(factor(s$PriorityCl, c("Low", "Medium", "High"))),
             weight = 0.5,
             options = pathOptions(pane = "scrip"),
-            opacity = opacity/2,
+            opacity = scrip_opacity,
             color = "black",
-            fillOpacity = opacity/2) |>
+            fillOpacity = scrip_opacity) |>
         addLegend(
             position = "bottomright",
             pal = pal2,
             values = factor(c("Low", "Medium", "High"), c("Low", "Medium", "High")),
             title = "SCRIP",
-            opacity = opacity)
+            opacity = scrip_opacity)
         grp <- c(unique(p$HERD_NA), "SCRIP")
     } else {
         m <- map_base()
@@ -351,7 +362,7 @@ map_one_base <- function(dat, region, inputs = NULL, custom_var = NULL,
             baseGroups = c("CartoDB", "ESRI", "Open Street Map", "Google"),
             overlayGroups = grp,
             position = "topright",
-            options = leaflet::layersControlOptions(collapsed = TRUE))
+            options = leaflet::layersControlOptions(collapsed = collapsed))
     } else {
         if (inherits(extra, "sf")) {
             map_base() |>
@@ -379,7 +390,7 @@ map_one_base <- function(dat, region, inputs = NULL, custom_var = NULL,
                 baseGroups = c("CartoDB", "ESRI", "Open Street Map", "Google"),
                 overlayGroups = c(grp, "Custom Layer"),
                 position = "topright",
-                options = leaflet::layersControlOptions(collapsed = TRUE))
+                options = leaflet::layersControlOptions(collapsed = collapsed))
         } else {
             map_base() |>
             map_region_popup(p, region, opacity = opacity) |>
@@ -407,7 +418,7 @@ map_one_base <- function(dat, region, inputs = NULL, custom_var = NULL,
                 baseGroups = c("CartoDB", "ESRI", "Open Street Map", "Google"),
                 overlayGroups = c(grp, "Custom Layer"),
                 position = "topright",
-                options = leaflet::layersControlOptions(collapsed = TRUE))
+                options = leaflet::layersControlOptions(collapsed = collapsed))
         }
 
     }
@@ -415,7 +426,7 @@ map_one_base <- function(dat, region, inputs = NULL, custom_var = NULL,
 
 # map_base() |> map_region_popup(p, "Boreal")
 # map_one(dat, "Boreal")
-map_custom <- function(map, custom, opacity = 0.8) {
+map_custom <- function(map, custom, opacity = 0.8, collapsed = TRUE) {
 
     if(inherits(custom, "SpatRaster")) {
         m <- map |>
@@ -452,7 +463,7 @@ map_custom <- function(map, custom, opacity = 0.8) {
             baseGroups = c("CartoDB", "ESRI", "Open Street Map", "Google"),
             overlayGroups = "Custom Layer",
             position = "topright",
-            options = leaflet::layersControlOptions(collapsed = TRUE))
+            options = leaflet::layersControlOptions(collapsed = collapsed))
     m
 }
 
