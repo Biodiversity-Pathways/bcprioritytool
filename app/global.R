@@ -46,10 +46,9 @@ pal <- colorFactor(
 # used for SCRIP
 pal2 <- colorFactor(
        palette = c("darkgreen","green", "lightgreen"),
-       domain = factor(c("Low", "Medium", "High"), c("Low", "Medium", "High")),
+       domain = factor(c("High", "Medium", "Low"), c("High", "Medium", "Low")),
        ordered = TRUE,
        na.color = NA)
-
 
 ui_formula <- function(region_name, custom_var = FALSE) {
     f1 <- switch(tolower(region_name),

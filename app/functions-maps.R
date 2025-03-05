@@ -224,7 +224,7 @@ map_one <- function(map, dat, region, inputs = NULL, custom_var = NULL,
         addPolygons(
             data = s,
             group = "SCRIP",
-            fillColor = pal2(factor(s$PriorityCl, c("Low", "Medium", "High"))),
+            fillColor = pal2(factor(s$PriorityCl, c("High", "Medium", "Low"))),
             weight = 0.5,
             options = pathOptions(pane = "scrip"),
             opacity = scrip_opacity,
@@ -233,7 +233,7 @@ map_one <- function(map, dat, region, inputs = NULL, custom_var = NULL,
         addLegend(
             position = "bottomright",
             pal = pal2,
-            values = factor(c("Low", "Medium", "High"), c("Low", "Medium", "High")),
+            values = factor(c("High", "Medium", "Low"), c("High", "Medium", "Low")),
             title = "SCRIP",
             opacity = scrip_opacity)
         grp <- c(unique(p$HERD_NA), "SCRIP")
@@ -331,7 +331,7 @@ map_one_base <- function(dat, region, inputs = NULL, custom_var = NULL,
         addPolygons(
             data = s,
             group = "SCRIP",
-            fillColor = pal2(factor(s$PriorityCl, c("Low", "Medium", "High"))),
+            fillColor = pal2(factor(s$PriorityCl, c("High", "Medium", "Low"))),
             weight = 0.5,
             options = pathOptions(pane = "scrip"),
             opacity = scrip_opacity,
@@ -340,7 +340,7 @@ map_one_base <- function(dat, region, inputs = NULL, custom_var = NULL,
         addLegend(
             position = "bottomright",
             pal = pal2,
-            values = factor(c("Low", "Medium", "High"), c("Low", "Medium", "High")),
+            values = factor(c("High", "Medium", "Low"), c("High", "Medium", "Low")),
             title = "SCRIP",
             opacity = scrip_opacity)
         grp <- c(unique(p$HERD_NA), "SCRIP")
