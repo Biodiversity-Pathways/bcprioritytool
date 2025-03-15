@@ -28,8 +28,11 @@ source("functions-data.R")
 source("functions-maps.R")
 
 dat <- readRDS("app-data-regions.rds")
+dat$Central$HERD_NA[dat$Central$HERD_NA == "Moberly"] <- "Klinse-za"
 h <- readRDS("app-data-herds.rds")
+h$HERD_NA[h$HERD_NA == "Moberly"] <- "Klinse-za"
 s <- readRDS("app-data-scrip.rds")
+s$HerdName[s$HerdName == "Klinse Za"] <- "Klinse-za"
 
 TITLE <- "BC Prioritization Support Tool"
 MAP_HEIGHT <- 600
